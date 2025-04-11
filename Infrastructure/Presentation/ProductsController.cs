@@ -46,6 +46,7 @@ namespace Presentation
             var result = await serviceManager.productService.GetAllTypesAsync();
             if (result == null) return NotFound();
             return Ok(result);
+
         }
     }
 }

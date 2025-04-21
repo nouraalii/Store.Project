@@ -1,11 +1,14 @@
 
 using Domain.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Data;
 using Services;
 using Services.Abstraction;
-using AssemblyMapping = Services.AssemblyReference;
+using Shared.ErrorsModels;
+using Store.Project.Api.Extensions;
+using Store.Project.Api.Middlewares;
 
 namespace Store.Project.Api
 {
@@ -17,43 +20,15 @@ namespace Store.Project.Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.RegisterAllServices(builder.Configuration);
 
-            builder.Services.AddDbContext<StoreDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            builder.Services.AddScoped<IDbInitializer, DbInitializer>(); //Allow DI 
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddAutoMapper(typeof(AssemblyMapping).Assembly);
-            builder.Services.AddScoped<IServiceManager,ServiceManager>();
 
             var app = builder.Build();
 
-            #region Seeding
-            using var Scope = app.Services.CreateScope();
-            var dbInitializer = Scope.ServiceProvider.GetRequiredService<IDbInitializer>(); //Ask CLR TO create object
-            await dbInitializer.InitializeAsync();  
-            #endregion
-
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseStaticFiles();
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
 
 
-            app.MapControllers();
+            await app.ConfigureMiddlewares();
 
             app.Run();
         }

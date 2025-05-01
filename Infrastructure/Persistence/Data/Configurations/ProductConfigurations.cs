@@ -7,7 +7,7 @@ using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Data
+namespace Persistence.Data.Configurations
 {
     public class ProductConfigurations : IEntityTypeConfiguration<Product>
     {

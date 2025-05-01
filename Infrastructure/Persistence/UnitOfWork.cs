@@ -42,7 +42,7 @@ namespace Persistence
 
         public Task<int> SaveChangesAsync()
         {
-            throw new NotImplementedException();
+            return _context.SaveChangesAsync();
         }
     }
 }
